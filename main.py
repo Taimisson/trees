@@ -1,6 +1,5 @@
 from queue import Queue
 
-
 class Node:
     def __init__(self, data, parent=None):
         self.data = data
@@ -25,18 +24,6 @@ class BinaryTree:
             self.root = node
         else:
             self.root = None
-
-    # Percorre a árvore em ordem simétrica mas com parenteses, igual uma expressão matemática
-    def simetric_traversal(self, node=None):
-        if node is None:
-            node = self.root
-        if node.left:
-            print("(", end="")
-            self.simetric_traversal(node.left)
-        print(node, end="")
-        if node.right:
-            self.simetric_traversal(node.right)
-            print(")", end="")
 
     # Percorre a árvore em pós-ordem
     def postorder_traversal(self, node=None):
@@ -201,13 +188,13 @@ class AVLTree(BinarySearchTree):
 
         print("Rotacionando para a direita", node.data)
 
-        left_child = node.left
-        temp = left_child.right
+        left_child = node.left # 15 
+        temp = left_child.right # None  
 
-        left_child.right = node;
-        node.left = temp
+        left_child.right = node # direita do 15 e coloquei o 20
+        node.left = temp 
 
-        self.updateHeight(node)
+        self.updateHeight(node) 
         self.updateHeight(left_child)
 
         return left_child
@@ -217,7 +204,7 @@ class AVLTree(BinarySearchTree):
 
         print("Rotacionando para a esquerda", node.data)
 
-        right_child = node.right
+        right_child = node.right # 15 
         temp = right_child.left
 
         right_child.left = node
@@ -340,13 +327,18 @@ class AVLTree(BinarySearchTree):
             return self.rotateLeft(node)
         
         return node
-        
+
+
+
+
 avl = AVLTree()
 avl.insert(10)
 avl.insert(20)
 avl.insert(5)
 avl.insert(4)
 avl.insert(15)
+
+avl.level_order_traversal() 
 
 avl.remove(5)
 avl.remove(4)
@@ -358,3 +350,6 @@ if avl.root:
     
 print("Percurso level-order:")
 avl.level_order_traversal()
+
+
+# Tela com as visualizações da árvore: pós ordem, em ordem, nível
