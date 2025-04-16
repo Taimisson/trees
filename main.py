@@ -1,14 +1,13 @@
 from queue import Queue
 
 class Node:
-    def __init__(self, data, parent=None):
+    def __init__(self, data):
         self.data = data
 
         # Um nó pode ter um filho à esquerda e um filho à direita
         self.left = None
         self.right = None
 
-        self.parent = parent
         self.height = 1
 
     # Converter o nó para string
