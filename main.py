@@ -14,7 +14,7 @@ class Node:
     def __str__(self):
         return str(self.data)
 
-class BinaryTree:
+class BinaryTree: 
     def __init__(self, data=None, node=None): # Inicializa a árvore com um nó raiz
         if node:
             self.root = node
@@ -28,6 +28,8 @@ class BinaryTree:
     def postorder_traversal(self, node=None):
         if node is None:
             node = self.root
+        if node is None:
+            return
         if node.left:
             self.postorder_traversal(node.left)
         if node.right:
@@ -37,11 +39,24 @@ class BinaryTree:
     def inorder_traversal(self, node=None):
         if node is None:
             node = self.root
+        if node is None:
+            return
         if node.left:
             self.inorder_traversal(node.left)
         print(node, end=" ")
         if node.right:
             self.inorder_traversal(node.right)
+
+    def preorder_traversal(self, node=None):
+        if node is None:
+            node = self.root
+        if node is None:
+            return
+        print(node, end=" ")
+        if node.left:
+            self.preorder_traversal(node.left)
+        if node.right:
+            self.preorder_traversal(node.right)
 
     # Altura da arvore
     def height(self, node=None):
@@ -78,6 +93,41 @@ class BinaryTree:
                 queue.put(current.right) # Coloca o filho à direita na fila
 
         print()
+    
+    def build_tree_str(self, node=None, prefix="", is_left=True, lines=None):
+        if lines is None:
+            lines = []
+        if node is None:
+            node = self.root
+
+        # Primeiro, processa a subárvore direita
+        if node.right:
+            new_prefix = prefix + ("│   " if is_left else "    ")
+            self.build_tree_str(node.right, new_prefix, False, lines)
+
+        # Conector para este nó
+        connector = "└── " if is_left else "┌── "
+
+        # Calcula o BF se for uma AVLTree (senão, assume 0)
+        bf = 0
+        if hasattr(self, 'calcBalance'):
+            bf = self.calcBalance(node)
+
+        # Adiciona linha com dado e BF
+        lines.append(prefix + connector + f"{node.data} ({bf})")
+
+        # Depois, processa a subárvore esquerda
+        if node.left:
+            new_prefix = prefix + ("    " if is_left else "│   ")
+            self.build_tree_str(node.left, new_prefix, True, lines)
+
+        return lines
+
+    def print_tree(self):
+        for line in self.build_tree_str():
+            print(line)
+
+
 
 class BinarySearchTree(BinaryTree):
     # Inserção sem balanceamento
@@ -222,6 +272,10 @@ class AVLTree(BinarySearchTree):
         if not node:
             return Node(value)
 
+        # evita inserir valores repetidos
+        if value == node.data:
+            return node
+
         if value < node.data:
             node.left = self._insert(value, node.left)
         else:
@@ -330,25 +384,90 @@ class AVLTree(BinarySearchTree):
 
 
 
-avl = AVLTree()
-avl.insert(10)
-avl.insert(20)
-avl.insert(5)
-avl.insert(4)
-avl.insert(15)
+# avl = AVLTree()
+# avl.insert(10)
+# avl.insert(20)
+# avl.insert(5)
+# avl.insert(4)
+# avl.insert(15)
 
-avl.level_order_traversal() 
+# avl.level_order_traversal() 
 
-avl.remove(5)
-avl.remove(4)
+# avl.remove(5)
+# avl.remove(4)
 
-print("Raiz final:", avl.root)  # Deve exibir 15
-if avl.root:
-    print("Filho esquerdo da raiz:", avl.root.left)
-    print("Filho direito da raiz:", avl.root.right)
+# print("Raiz final:", avl.root)  # Deve exibir 15
+# if avl.root:
+#     print("Filho esquerdo da raiz:", avl.root.left)
+#     print("Filho direito da raiz:", avl.root.right)
     
-print("Percurso level-order:")
-avl.level_order_traversal()
+# print("Percurso level-order:")
+# avl.level_order_traversal()
 
 
 # Tela com as visualizações da árvore: pós ordem, em ordem, nível
+# ----- helpers de formatação -----
+RESET   = "\033[0m"
+BOLD    = "\033[1m"
+OKBLUE  = "\033[94m"
+OKCYAN  = "\033[96m"
+
+def print_boxed(title: str):
+    width = len(title) + 4
+    print(OKCYAN + "╔" + "═" * width + "╗")
+    print(f"║  {BOLD}{title}{RESET}{OKCYAN}  ║")
+    print("╚" + "═" * width + "╝" + RESET)
+
+def print_divider():
+    print(OKBLUE + "-" * 40 + RESET)
+
+# ----- menu revisitado -----
+def menu():
+    avl = AVLTree()
+    while True:
+        print_boxed("AVL Tree CLI")
+        print(" 1) Inserir elemento")
+        print(" 2) Remover elemento")
+        print(" 3) Exibir em ordem")
+        print(" 4) Exibir em pré-ordem")
+        print(" 5) Exibir em pós-ordem")
+        print(" 6) Exibir por nível")
+        print(" 7) Visualizar árvore")
+        print(" 8) Sair")
+        print_divider()
+
+        opcao = input("Escolha uma opção [1–8]: ")
+
+        if opcao == "1":
+            valor = int(input("🔹 Valor para inserir: "))
+            avl.insert(valor)
+        elif opcao == "2":
+            valor = int(input("🔹 Valor para remover: "))
+            avl.remove(valor)
+        elif opcao in {"3","4","5","6","7"}:
+            headers = {
+                "3": "Em‑Ordem",
+                "4": "Pré‑Ordem",
+                "5": "Pós‑Ordem",
+                "6": "Por Nível",
+                "7": "Estrutura da Árvore",
+            }
+            print_divider()
+            print_boxed(f"Travessia: {headers[opcao]}")
+            if opcao == "3": avl.inorder_traversal()
+            if opcao == "4": avl.preorder_traversal()
+            if opcao == "5": avl.postorder_traversal()
+            if opcao == "6": avl.level_order_traversal()
+            if opcao == "7": avl.print_tree()
+        elif opcao == "8":
+            print_divider()
+            print(f"{BOLD}Tchau!{RESET}")
+            break
+        else:
+            print(f"{BOLD}Opção inválida.{RESET}")
+        print()  # linha em branco antes de reexibir o menu
+
+
+if __name__ == "__main__":
+    menu()
+            
