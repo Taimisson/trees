@@ -1,0 +1,27 @@
+# Arquivos de cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Diretórios de ambiente virtual
+venv/
+env/
+ENV/
+
+# Arquivos de distribuição
+dist/
+build/
+*.egg-info/
+
+# Arquivos de log
+*.log
+
+# Arquivos de IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db 
